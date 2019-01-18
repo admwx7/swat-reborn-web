@@ -28,7 +28,7 @@ type ThunkResult = ThunkAction<void, RootState, undefined, AppAction>;
 
 export const navigate: ActionCreator<ThunkResult> = (path: string) => (dispatch) => {
   // Extract the page name from path.
-  const page = path === '/' ? 'view1' : path.slice(1);
+  const page = path === '/' ? 'home' : path.slice(1);
 
   // Any other info you might want to extract from the path (like page type),
   // you can do here
@@ -40,21 +40,18 @@ export const navigate: ActionCreator<ThunkResult> = (path: string) => (dispatch)
 
 const loadPage: ActionCreator<ThunkResult> = (page: string) => (dispatch) => {
   switch(page) {
-    case 'view1':
-      import('../components/my-view1.js').then((_module) => {
+    case 'home':
+      import('../views/home-view.js').then((_module) => {
         // Put code in here that you want to run every time when
         // navigating to view1 after my-view1.js is loaded.
       });
       break;
-    case 'view2':
-      import('../components/my-view2.js');
-      break;
-    case 'view3':
-      import('../components/my-view3.js');
+    case 'contributors':
+      import('../views/contributors-view.js');
       break;
     default:
-      page = 'view404';
-      import('../components/my-view404.js');
+      page = '404';
+      import('../views/not-found-view.js');
   }
 
   dispatch(updatePage(page));
