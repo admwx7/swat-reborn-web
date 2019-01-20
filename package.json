@@ -1,11 +1,11 @@
 {
-  "name": "pwa-starter-kit",
-  "version": "0.9.0",
+  "name": "swat-reborn-web",
+  "version": "0.1.0",
   "contributors": [
-    "The Polymer Authors"
+    "Austin Murdock"
   ],
   "license": "BSD-3-Clause",
-  "repository": "Polymer/pwa-starter-kit",
+  "repository": "admwx7/swat-reborn-web",
   "scripts": {
     "start": "gulp serve",
     "build": "tsc && polymer build --auto-base-path && gulp prpl-server",
