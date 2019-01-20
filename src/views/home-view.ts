@@ -1,4 +1,4 @@
-import { html } from 'lit-element';
+import { css, html } from 'lit-element';
 import { PageViewElement } from '../components/page-view-element.js';
 
 // These are the shared styles needed by this element.
@@ -7,7 +7,16 @@ import { SharedStyles } from '../styles/shared-styles.js';
 class HomeView extends PageViewElement {
   static get styles() {
     return [
-      SharedStyles
+      SharedStyles,
+      css`
+        section {
+          text-align: center;
+          padding: 16px;
+        }
+        section:nth-of-type(even) {
+          background: var(--app-section-even-color);
+        }
+      `,
     ];
   }
 

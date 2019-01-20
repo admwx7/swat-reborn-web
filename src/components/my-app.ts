@@ -2,7 +2,6 @@ import { LitElement, html, css, property, PropertyValues, TemplateResult } from 
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
-import { installOfflineWatcher } from 'pwa-helpers/network.js';
 import { installRouter } from 'pwa-helpers/router.js';
 import { updateMetadata } from 'pwa-helpers/metadata.js';
 
@@ -12,7 +11,6 @@ import { store, RootState } from '../store.js';
 // These are the actions needed by this element.
 import {
   navigate,
-  updateOffline,
   updateDrawerState
 } from '../actions/app.js';
 
@@ -25,25 +23,24 @@ import '@polymer/app-layout/app-drawer/app-drawer.js';
 import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import { downloadIcon, menuIcon } from '../styles/my-icons.js';
+import { downloadIcon, menuIcon, discordIcon } from '../styles/my-icons.js';
 
-interface MenuItem {
-  label: String | TemplateResult;
-  name?: String;
-  path: String;
-  target?: String;
-}
 interface LinkOptions {
   classList?: String[];
   selectable?: Boolean;
 }
+interface MenuItem {
+  icon?: TemplateResult;
+  label: String;
+  name?: String;
+  path: String;
+  target?: String;
+}
 class MyApp extends connect(store)(LitElement) {
   @property({type: String})
   appTitle = '';
-
   @property({type: String})
   private _page = '';
-
   @property({type: Boolean})
   private _drawerOpened = false;
 
@@ -54,15 +51,24 @@ class MyApp extends connect(store)(LitElement) {
       path: '/home',
     },
     {
+      label: 'User Stats',
+      name: 'user',
+      path: '/user',
+    },
+  ];
+  private _floatingButtons: Array<MenuItem> = [
+    {
+      icon: discordIcon,
       label: 'Find a Squad',
       path: 'https://discord.gg/AXqq37r',
       target: '_blank',
     },
     {
-      label: downloadIcon,
+      icon: downloadIcon,
+      label: 'Download Map',
       path: 'https://steamcommunity.com/sharedfiles/filedetails/?id=725282388',
       target: '_blank',
-    }
+    },
   ];
 
   static get styles() {
@@ -91,7 +97,6 @@ class MyApp extends connect(store)(LitElement) {
         --app-drawer-text-color: var(--app-light-text-color);
         --app-drawer-selected-color: var(--app-primary-color);
       }
-
       app-header {
         position: fixed;
         top: 0;
@@ -101,11 +106,9 @@ class MyApp extends connect(store)(LitElement) {
         background-color: var(--app-header-background-color);
         color: var(--app-header-text-color);
       }
-
       .toolbar-top {
         background-color: var(--app-header-background-color);
       }
-
       [main-title] {
         font-size: 32px;
         font-weight: bold;
@@ -115,11 +118,50 @@ class MyApp extends connect(store)(LitElement) {
         padding-right: 44px;
         line-height: 28px;
       }
-
+      #floating-menu {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        padding-right: 16px;
+        padding-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+      .floating-button svg {
+        display: block;
+        height: 44px;
+        width: 44px;
+      }
+      .floating-button {
+        position: relative;
+        margin-bottom: 8px;
+        color: var(--app-light-text-color);
+        fill: var(--app-light-text-color);
+        border-radius: 5px;
+      }
+      .floating-button:hover:after {
+        display: block;
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        width: 120px;
+        text-align: right;
+        transform: translateY(-50%);
+        content: attr(aria-label);
+        color: inherit;
+        padding-right: 6px;
+      }
+      .floating-button, .floating-button:hover:after {
+        background-color: var(--app-background-color);
+        border-radius: 6px;
+      }
+      .floating-button:hover {
+        color: var(--app-primary-color);
+        fill: var(--app-primary-color);
+      }
       .toolbar-list {
         display: none;
       }
-
       .toolbar-list > a {
         display: inline-block;
         color: var(--app-header-text-color);
@@ -128,17 +170,14 @@ class MyApp extends connect(store)(LitElement) {
         padding: 4px 16px;
         fill: var(--app-header-text-color);
       }
-
       .toolbar-list > a svg {
         margin-bottom: -6px;
       }
-
       .toolbar-list > a[selected] {
         color: var(--app-header-selected-color);
         border-bottom: 4px solid var(--app-header-selected-color);
         fill: var(--app-header-selected-color);
       }
-
       .menu-btn {
         background: none;
         border: none;
@@ -147,7 +186,6 @@ class MyApp extends connect(store)(LitElement) {
         height: 44px;
         width: 44px;
       }
-
       .drawer-list {
         box-sizing: border-box;
         width: 100%;
@@ -156,7 +194,6 @@ class MyApp extends connect(store)(LitElement) {
         background: var(--app-drawer-background-color);
         position: relative;
       }
-
       .drawer-list > a {
         display: block;
         text-decoration: none;
@@ -164,63 +201,51 @@ class MyApp extends connect(store)(LitElement) {
         line-height: 40px;
         padding: 0 24px;
       }
-
       .drawer-list > a[selected] {
         color: var(--app-drawer-selected-color);
         border-right: 4px solid var(--app-header-selected-color);
         font-weight: bold;
       }
-
       /* Workaround for IE11 displaying <main> as inline */
       main {
         display: block;
       }
-
       .main-content {
         padding-top: 64px;
         min-height: 100vh;
       }
-
       .page {
         display: none;
       }
-
       .page[active] {
         display: block;
       }
-
       .footer-link {
         color: var(--app-light-text-color);
       }
-
       footer {
         padding: 16px;
         background: var(--app-drawer-background-color);
         color: var(--app-drawer-text-color);
         text-align: center;
       }
-
       footer > p {
         margin-top: 4px;
         margin-bottom: 4px;
         font-size: 10pt;
       }
-
       /* Wide layout: when the viewport width is bigger than 460px, layout
         changes to a wide layout */
       @media (min-width: 460px) {
         .toolbar-list {
             display: block;
           }
-
           .menu-btn {
             display: none;
           }
-
           .main-content {
             padding-top: 107px;
           }
-
           /* The drawer button isn't shown in the wide layout, so we don't
           need to offset the title */
           [main-title] {
@@ -230,7 +255,6 @@ class MyApp extends connect(store)(LitElement) {
       `
     ];
   }
-  
   protected render() {
     // Anything that's related to rendering should be done in here.
     return html`
@@ -256,10 +280,15 @@ class MyApp extends connect(store)(LitElement) {
         </nav>
       </app-drawer>
 
+      <section id="floating-menu">
+        ${this._floatingButtons.map(this._generateLink.bind(this, { classList: ['floating-button'] }))}
+      </section>
+
       <!-- Main content -->
       <main role="main" class="main-content">
         <home-view class="page" ?active="${this._page === 'home'}"></home-view>
         <contributors-view class="page" ?active="${this._page === 'contributors'}"></contributors-view>
+        <user-view class="page" ?active="${this._page === 'user'}"></user-view>
         <not-found-view class="page" ?active="${this._page === '404'}"></not-found-view>
       </main>
 
@@ -269,21 +298,17 @@ class MyApp extends connect(store)(LitElement) {
       </footer>
     `;
   }
-
   constructor() {
     super();
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures
     setPassiveTouchGestures(true);
   }
-
   protected firstUpdated() {
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
-    installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     installMediaQueryWatcher(`(min-width: 460px)`,
       () => store.dispatch(updateDrawerState(false)));
   }
-
   protected updated(changedProps: PropertyValues) {
     if (changedProps.has('_page')) {
       const pageTitle = this.appTitle + ' - ' + this._page;
@@ -294,19 +319,15 @@ class MyApp extends connect(store)(LitElement) {
       });
     }
   }
-
   private _generateLink(options: LinkOptions, item: MenuItem) {
-    return html`<a href="${item.path}" class="${(options.classList || []).join(' ')}" ?selected="${options.selectable && this._page === item.name}" target="${item.target || ''}">${item.label}</a>`;
+    return html`<a href="${item.path}" class="${(options.classList || []).join(' ')}" ?selected="${options.selectable && this._page === item.name}" target="${item.target || ''}" aria-label="${item.label}">${item.icon || item.label}</a>`;
   }
-
   private _menuButtonClicked() {
     store.dispatch(updateDrawerState(true));
   }
-
   private _drawerOpenedChanged(e: Event) {
     store.dispatch(updateDrawerState((e.target as AppDrawerElement).opened));
   }
-
   stateChanged(state: RootState) {
     this._page = state.app!.page;
     this._drawerOpened = state.app!.drawerOpened;
