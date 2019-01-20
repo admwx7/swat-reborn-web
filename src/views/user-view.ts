@@ -378,7 +378,7 @@ class UserView extends PageViewElement {
 
     try {
       const info = await (await fetch(`https://us-central1-swat-reborn.cloudfunctions.net/swat-player-info?steamId=${steamId}`)).json();
-      if (info.playerData.renownXP === 0) {
+      if (info.playerData.renownXP === 0 && info.playerData.renown === 0) {
         throw new Error('account has no XP, very likely a bad steamID');
       }
       yield html`
@@ -458,7 +458,7 @@ class UserView extends PageViewElement {
           <h3>Game History</h3>
           ${swatDifficulties.
             map((def) => {
-              return html`<span>${def.label}: ${stats.gamesWon[def.key] || 0} / ${stats.gamesLost[def.key] || 0}</span>`;
+              return html`<span>${def.label}: ${stats.gamesWon[def.key] || 0} : ${stats.gamesLost[def.key] || 0}</span>`;
           })}
         </section>
         <section id="time">
