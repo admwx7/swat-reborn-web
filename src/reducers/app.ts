@@ -14,7 +14,8 @@ import {
   UPDATE_OFFLINE,
   OPEN_SNACKBAR,
   CLOSE_SNACKBAR,
-  UPDATE_DRAWER_STATE
+  UPDATE_DRAWER_STATE,
+  UPDATE_USER_STATE,
 } from '../actions/app.js';
 import { RootAction } from '../store.js';
 
@@ -23,6 +24,8 @@ export interface AppState {
   offline: boolean;
   drawerOpened: boolean;
   snackbarOpened: boolean;
+  loggedIn: boolean;
+  steamUser: object | null;
 }
 
 const INITIAL_STATE: AppState = {
@@ -30,6 +33,8 @@ const INITIAL_STATE: AppState = {
   offline: false,
   drawerOpened: false,
   snackbarOpened: false,
+  loggedIn: false,
+  steamUser: null,
 };
 
 const app: Reducer<AppState, RootAction> = (state = INITIAL_STATE, action) => {
@@ -48,6 +53,12 @@ const app: Reducer<AppState, RootAction> = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         drawerOpened: action.opened
+      };
+    case UPDATE_USER_STATE:
+      return {
+        ...state,
+        loggedIn: action.loggedIn,
+        steamUser: action.steamUser,
       };
     case OPEN_SNACKBAR:
       return {

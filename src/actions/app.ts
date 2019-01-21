@@ -4,17 +4,27 @@ import { RootState } from '../store.js';
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
 export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
+export const UPDATE_USER_STATE = 'UPDATE_USER_STATE';
 export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export interface AppActionUpdatePage extends Action<'UPDATE_PAGE'> {page: string};
 export interface AppActionUpdateOffline extends Action<'UPDATE_OFFLINE'> {offline: boolean};
 export interface AppActionUpdateDrawerState extends Action<'UPDATE_DRAWER_STATE'> {opened: boolean};
+export interface AppActionUpdateUserState extends Action<'UPDATE_USER_STATE'> {loggedIn: boolean, steamUser: object | null};
 export interface AppActionOpenSnackbar extends Action<'OPEN_SNACKBAR'> {};
 export interface AppActionCloseSnackbar extends Action<'CLOSE_SNACKBAR'> {};
-export type AppAction = AppActionUpdatePage | AppActionUpdateOffline | AppActionUpdateDrawerState | AppActionOpenSnackbar | AppActionCloseSnackbar;
+export type AppAction = AppActionUpdatePage | AppActionUpdateOffline | AppActionUpdateDrawerState | AppActionOpenSnackbar | AppActionCloseSnackbar | AppActionUpdateUserState;
 
 type ThunkResult = ThunkAction<void, RootState, undefined, AppAction>;
+
+export const updateUserState: ActionCreator<AppActionUpdateUserState> = (loggedIn: boolean, steamUser: object | null) => {
+  return {
+    type: UPDATE_USER_STATE,
+    loggedIn,
+    steamUser,
+  };
+};
 
 export const navigate: ActionCreator<ThunkResult> = (path: string) => (dispatch) => {
   // Extract the page name from path.
@@ -41,6 +51,9 @@ const loadPage: ActionCreator<ThunkResult> = (page: string) => (dispatch) => {
       break;
     case 'user':
       import('../views/user-view.js');
+      break;
+    case 'leaderboard':
+      import('../views/leaderboard-view.js');
       break;
     default:
       page = '404';

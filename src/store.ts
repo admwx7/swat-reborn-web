@@ -28,13 +28,16 @@ import { lazyReducerEnhancer } from 'pwa-helpers/lazy-reducer-enhancer.js';
 
 import app, { AppState } from './reducers/app.js';
 import { AppAction } from './actions/app.js';
+import leaderboard, { LeaderboardState } from './reducers/leaderboard.js';
+import { LeaderboardAction } from './actions/leaderboard.js';
 
 // Overall state extends static states and partials lazy states.
 export interface RootState {
   app?: AppState;
+  leaderboard?: LeaderboardState;
 }
 
-export type RootAction = AppAction; // | CounterAction | ShopAction;
+export type RootAction = AppAction | LeaderboardAction;
 
 // Sets up a Chrome extension for time travel debugging.
 // See https://github.com/zalmoxisus/redux-devtools-extension for more information.
@@ -57,5 +60,6 @@ export const store = createStore(
 
 // Initially loaded reducers.
 store.addReducers({
-  app
+  app,
+  leaderboard,
 });

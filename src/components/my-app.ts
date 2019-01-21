@@ -11,7 +11,9 @@ import { store, RootState } from '../store.js';
 // These are the actions needed by this element.
 import {
   navigate,
-  updateDrawerState
+  updateDrawerState,
+  // TODO: login
+  // updateUserState,
 } from '../actions/app.js';
 
 // The following line imports the type only - it will be removed by tsc so
@@ -43,6 +45,11 @@ class MyApp extends connect(store)(LitElement) {
   private _page = '';
   @property({type: Boolean})
   private _drawerOpened = false;
+  // TODO: for login
+  // @property({ type: Boolean })
+  // private _loggedIn: boolean = false;
+  // @property ({ type: Object })
+  // private _steamUser: object | null = null;
 
   private _menuItems: Array<MenuItem> = [
     {
@@ -54,6 +61,11 @@ class MyApp extends connect(store)(LitElement) {
       label: 'User Stats',
       name: 'user',
       path: '/user',
+    },
+    {
+      label: 'Leaderboard',
+      name: 'leaderboard',
+      path: '/leaderboard',
     },
   ];
   private _floatingButtons: Array<MenuItem> = [
@@ -115,7 +127,7 @@ class MyApp extends connect(store)(LitElement) {
         /* In the narrow layout, the toolbar is offset by the width of the
         drawer button, and the text looks not centered. Add a padding to
         match that button */
-        padding-right: 44px;
+        padding-left: 0px;
         line-height: 28px;
       }
       #floating-menu {
@@ -234,6 +246,11 @@ class MyApp extends connect(store)(LitElement) {
         margin-bottom: 4px;
         font-size: 10pt;
       }
+      #login-btn {
+        width: 44px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+      }
       /* Wide layout: when the viewport width is bigger than 460px, layout
         changes to a wide layout */
       @media (min-width: 460px) {
@@ -249,7 +266,7 @@ class MyApp extends connect(store)(LitElement) {
           /* The drawer button isn't shown in the wide layout, so we don't
           need to offset the title */
           [main-title] {
-            padding-right: 0px;
+            padding-left: 44px;
           }
         }
       `
@@ -263,6 +280,7 @@ class MyApp extends connect(store)(LitElement) {
         <app-toolbar class="toolbar-top">
           <button class="menu-btn" title="Menu" @click="${this._menuButtonClicked}">${menuIcon}</button>
           <div main-title>${this.appTitle}</div>
+          <div id="login-btn" @click="${this.login()}">login</div>
         </app-toolbar>
 
         <!-- This gets hidden on a small screen-->
@@ -289,6 +307,7 @@ class MyApp extends connect(store)(LitElement) {
         <home-view class="page" ?active="${this._page === 'home'}"></home-view>
         <contributors-view class="page" ?active="${this._page === 'contributors'}"></contributors-view>
         <user-view class="page" ?active="${this._page === 'user'}"></user-view>
+        <leaderboard-view class="page" ?active="${this._page === 'leaderboard'}"></leaderboard-view>
         <not-found-view class="page" ?active="${this._page === '404'}"></not-found-view>
       </main>
 
@@ -328,9 +347,16 @@ class MyApp extends connect(store)(LitElement) {
   private _drawerOpenedChanged(e: Event) {
     store.dispatch(updateDrawerState((e.target as AppDrawerElement).opened));
   }
+  login() {
+    // TODO: login
+    // store.dispatch(updateUserState());
+  }
   stateChanged(state: RootState) {
     this._page = state.app!.page;
     this._drawerOpened = state.app!.drawerOpened;
+    // TODO: login
+    // this._loggedIn = state.app!.loggedIn;
+    // this._steamUser = state.app!.steamUser;
   }
 }
 

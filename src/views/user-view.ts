@@ -1,257 +1,10 @@
 import { css, html, property, TemplateResult } from 'lit-element';
 import { asyncReplace } from 'lit-html/directives/async-replace';
-import { PageViewElement } from '../components/page-view-element.js';
+import { PageViewElement } from '../components/page-view-element';
 
 // These are the shared styles needed by this element.
-import { SharedStyles } from '../styles/shared-styles.js';
-
-type Definition = Record<'key' | 'label', string>;
-const swatArmors: Array<Definition> = [
-  {
-    key: 'light',
-    label: 'Compact',
-  },
-  {
-    key: 'medium',
-    label: 'Standard',
-  },
-  {
-    key: 'heavy',
-    label: 'Large',
-  },
-  {
-    key: 'advanced',
-    label: 'Advanced',
-  },
-];
-const swatClasses: Array<Definition> = [
-  {
-    key: 'sniper',
-    label: 'Covert Sniper',
-  },
-  {
-    key: 'medic',
-    label: 'Field Medic',
-  },
-  {
-    key: 'tactician',
-    label: 'Tactician',
-  },
-  {
-    key: 'psychologist',
-    label: 'Psychologist',
-  },
-  {
-    key: 'maverick',
-    label: 'Maverick',
-  },
-  {
-    key: 'ho',
-    label: 'Heavy Ordance',
-  },
-  {
-    key: 'demolitions',
-    label: 'Demolitions',
-  },
-  {
-    key: 'cyborg',
-    label: 'Cyborg',
-  },
-  {
-    key: 'pyrotechnician',
-    label: 'Pyrotechnician',
-  },
-  {
-    key: 'watchman',
-    label: 'Watchman',
-  },
-];
-const swatSpecs: Array<Definition> = [
-  {
-    key: '',
-    label: 'Weaponry',
-  },
-  {
-    key: '',
-    label: 'Power Armor',
-  },
-  {
-    key: '',
-    label: 'Energy Cells',
-  },
-  {
-    key: '',
-    label: 'Cybernetics',
-  },
-  {
-    key: '',
-    label: 'Triage',
-  },
-  {
-    key: '',
-    label: 'Chemistry',
-  },
-  {
-    key: '',
-    label: 'Leadership',
-  },
-  {
-    key: '',
-    label: 'Pack Rat',
-  },
-  {
-    key: '',
-    label: 'Espionage',
-  },
-];
-const swatTalents: Array<Definition> = [
-  {
-    key: 'wiring',
-    label: 'Wiring',
-  },
-  {
-    key: 'running',
-    label: 'Running',
-  },
-  {
-    key: 'spotting',
-    label: 'Spotting',
-  },
-  {
-    key: 'toughness',
-    label: 'Toughness',
-  },
-  {
-    key: 'tinkering',
-    label: 'Tinkering',
-  },
-  {
-    key: 'hacking',
-    label: 'Hacking',
-  },
-  {
-    key: 'courage',
-    label: 'Courage',
-  },
-];
-const swatTraits: Array<Definition> = [
-  {
-    key: 'skilled',
-    label: 'Skilled',
-  },
-  {
-    key: 'gifted',
-    label: 'Gifted',
-  },
-  {
-    key: 'survivalist',
-    label: 'Survivalist',
-  },
-  {
-    key: 'dragoon',
-    label: 'Dragoon',
-  },
-  {
-    key: 'acrobat',
-    label: 'Acrobat',
-  },
-  {
-    key: 'swift_learner',
-    label: 'Swift Learner',
-  },
-  {
-    key: 'healer',
-    label: 'Healer',
-  },
-  {
-    key: 'flower_child',
-    label: 'Flower Child',
-  },
-  {
-    key: 'chem_reliant',
-    label: 'Chem. Reliant',
-  },
-  {
-    key: 'rad_resistant',
-    label: 'Rad. Resistant',
-  },
-  {
-    key: 'gadgeteer',
-    label: 'Gadgeteer',
-  },
-  {
-    key: 'prowler',
-    label: 'Powler',
-  },
-  {
-    key: 'energizer',
-    label: 'Energizer',
-  },
-  {
-    key: 'reckless',
-    label: 'Reckless',
-  },
-  {
-    key: 'engineer',
-    label: 'Engineer',
-  },
-];
-const swatWapons: Array<Definition> = [
-  {
-    key: 'assault_rifle',
-    label: 'Assault Rifle',
-  },
-  {
-    key: 'sniper_rifle',
-    label: 'Sniper Rifle',
-  },
-  {
-    key: 'chaingun',
-    label: 'Chaingun',
-  },
-  {
-    key: 'rocket_launcher',
-    label: 'Rocket Launcher',
-  },
-  {
-    key: 'flamethrower',
-    label: 'Flamethrower',
-  },
-  {
-    key: 'laser_rifle',
-    label: 'Laser Rifle',
-  },
-];
-const swatDifficulties: Array<Definition> = [
-  {
-    key: 'defense',
-    label: 'Defense',
-  },
-  {
-    key: 'normal',
-    label: 'Normal',
-  },
-  {
-    key: 'hard',
-    label: 'Hard',
-  },
-  {
-    key: 'insane',
-    label: 'Insane',
-  },
-  {
-    key: 'pin',
-    label: 'Perfect Insane',
-  },
-  {
-    key: 'nightmare',
-    label: 'Nightmare',
-  },
-  {
-    key: 'extinction',
-    label: 'Extinction',
-  },
-];
+import { Armors, Classes, Definition, Difficulties, Specializations, Talents, Traits, Weapons } from '../data-structures/swat';
+import { SharedStyles } from '../styles/shared-styles';
 
 class UserView extends PageViewElement {
   @property({ type: String })
@@ -388,17 +141,17 @@ class UserView extends PageViewElement {
         <section id="ranks">
           <h3>Ranks</h3>
           <h4>Class</h4>
-          ${swatClasses.map(this.__generateRankTemplate.bind(this, info.rcpd))}
+          ${Classes.map(this.__generateRankTemplate.bind(this, info.rcpd))}
           <h4>Trait</h4>
-          ${swatTraits.map(this.__generateRankTemplate.bind(this, info.rcpd))}
+          ${Traits.map(this.__generateRankTemplate.bind(this, info.rcpd))}
           <h4>Weapon</h4>
-          ${swatWapons.map(this.__generateRankTemplate.bind(this, info.rcpd))}
+          ${Weapons.map(this.__generateRankTemplate.bind(this, info.rcpd))}
           <h4>Specialization</h4>
-          ${swatSpecs.map(this.__generateRankTemplate.bind(this, info.rcpd))}
+          ${Specializations.map(this.__generateRankTemplate.bind(this, info.rcpd))}
           <h4>Armor</h4>
-          ${swatArmors.map(this.__generateRankTemplate.bind(this, info.rcpd))}
+          ${Armors.map(this.__generateRankTemplate.bind(this, info.rcpd))}
           <h4>Talent</h4>
-          ${swatTalents.map(this.__generateRankTemplate.bind(this, info.rcpd))}
+          ${Talents.map(this.__generateRankTemplate.bind(this, info.rcpd))}
         </section>
         `;
     } catch (e) {
@@ -412,7 +165,7 @@ class UserView extends PageViewElement {
     //     return html`
     //       <div class="build">
     //         <div class="row">
-    //           <span>${swatClasses.find((def) => {
+    //           <span>${Classes.find((def) => {
     //             return def.key === build.class;
     //           })!.label}</span>
     //           <span>r${build.rank}</span>
@@ -456,14 +209,14 @@ class UserView extends PageViewElement {
       yield html`
         <section id="history">
           <h3>Game History</h3>
-          ${swatDifficulties.
-            map((def) => {
+          ${Difficulties.
+            map((def: Definition) => {
               return html`<span>${def.label}: ${stats.gamesWon[def.key] || 0} : ${stats.gamesLost[def.key] || 0}</span>`;
           })}
         </section>
         <section id="time">
           <h3>Time Played</h3>
-          ${swatClasses.
+          ${Classes.
             filter((def) => {
               const timePlayed = stats.timePlayed[def.key];
               return timePlayed && timePlayed > 0;
