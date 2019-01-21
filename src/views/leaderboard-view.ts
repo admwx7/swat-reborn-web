@@ -1,15 +1,20 @@
 import { css, html, property, PropertyValues } from 'lit-element';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 
-import { PageViewElement } from '../components/page-view-element';
+import { PageViewElement } from '../components/page-view-element.js';
 import { store, RootState } from '../store.js';
 // import { Definition, Difficulties } from '../data-structures/swat';
-import { SharedStyles } from '../styles/shared-styles';
-import { updateLeaderboard } from '../actions/leaderboard';
+import { SharedStyles } from '../styles/shared-styles.js';
+import { updateLeaderboard } from '../actions/leaderboard.js';
+import leaderboard from '../reducers/leaderboard.js';
+
+store.addReducers({
+  leaderboard
+});
 
 class LeaderboardView extends connect(store)(PageViewElement) {
   @property({ type: Object })
-  public leaderboard: object[] = [];
+  public leaderboard: object | null = null;
 
   static get styles() {
     return [
@@ -33,7 +38,12 @@ class LeaderboardView extends connect(store)(PageViewElement) {
       console.error(e);
     }
   }
+
   stateChanged(state: RootState) {
+    if (!state || !state.leaderboard) {
+      return;
+    }
+    
     this.leaderboard = state.leaderboard!.leaderboard;
   }
   async update(changedProps: PropertyValues) {

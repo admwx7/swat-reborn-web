@@ -246,3 +246,19 @@ export const Weapons: Array<Definition> = [
     label: 'Laser Rifle',
   },
 ];
+
+export interface CharacterBuild {
+  armor: string;
+  class: string;
+  rank: number;
+  rankXP: number;
+  slot: number;
+  spec: string;
+  talent: string;
+  trait: string;
+  weapon: string;
+}
+export interface Achievement {
+  name: string;
+  rank: number;
+}

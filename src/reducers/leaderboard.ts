@@ -1,7 +1,7 @@
 import { Reducer } from 'redux';
 import {
   UPDATE_LEADERBOARD,
-} from '../actions/leaderboard';
+} from '../actions/leaderboard.js';
 import { RootAction } from '../store.js';
 
 export interface LeaderboardState {
