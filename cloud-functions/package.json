@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "deploy": "concurrently \"npm run deploy:steam-auth\" \"npm run deploy:steam-player-summary\" \"npm run deploy:swat-leaderboards\" \"npm run deploy:swat-matches\" \"npm run deploy:swat-player-info\" \"npm run deploy:swat-player-stats\"",
+    "deploy:steam-auth": "cd steam-auth && npm run deploy",
+    "deploy:steam-player-summary": "cd steam-player-summary && npm run deploy",
+    "deploy:swat-leaderboards": "cd swat-leaderboards && npm run deploy",
+    "deploy:swat-matches": "cd swat-matches && npm run deploy",
+    "deploy:swat-player-info": "cd swat-player-info && npm run deploy",
+    "deploy:swat-player-stats": "cd swat-player-stats && npm run deploy"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "steam-player-summary",
+  "version": "0.0.1",
+  "dependencies": {
+    "node-fetch": "^2.3.0"
+  },
+  "scripts": {
+    "deploy": "gcloud functions deploy steam-player-summary --runtime nodejs8 --source ."
+  }
+}
